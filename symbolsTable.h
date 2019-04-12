@@ -22,12 +22,11 @@ typedef struct {
 
 void increase_depth();
 void decrease_depth();
-void update_jmp();
-void update_jmpc();
+void update_jmp(int i);
 void write_table_ins();
 void add_symbol(char * name);
 int add_symbol_tmp();
-void add_ins(char * name, int i, int j, int k);
+int add_ins(char * name, int i, int j, int k);
 int get_addr(char * name);
 int get_addr_curr_depth(char * name);
 int pop_symbol_tmp();
