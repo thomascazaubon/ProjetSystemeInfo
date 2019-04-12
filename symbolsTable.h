@@ -28,7 +28,6 @@ void add_symbol(char * name);
 int add_symbol_tmp();
 int add_ins(char * name, int i, int j, int k);
 int get_addr(char * name);
-int get_addr_curr_depth(char * name);
 int pop_symbol_tmp();
 void print_table_sym();
 void print_table_ins();

@@ -26,8 +26,7 @@
 
 
 %%
-Start: tMAIN tPARO tPARF Body {print_table_sym();
-															 print_table_ins();
+Start: tMAIN tPARO tPARF Body {
 															 write_table_ins();
 															};
 
@@ -42,15 +41,15 @@ JMPC: {
 
 JMP: {$$ = add_ins("JMP",-1,0,0);};
 
-IfSansElse: tIF tPARO Egalite tPARF JMPC Body {update_jmp($5);printf("if\n");};
+IfSansElse: tIF tPARO Egalite tPARF JMPC Body {update_jmp($5);};
 
-IfAvecElse: tIF tPARO Egalite tPARF JMPC Body JMP tELSE {printf("juste avant else\n");print_table_sym();update_jmp($5);}Body {update_jmp($7);};
+IfAvecElse: tIF tPARO Egalite tPARF JMPC Body JMP tELSE {update_jmp($5);}Body {update_jmp($7);};
 
 If : IfSansElse | IfAvecElse;
 
 Egalite: Expression tEGAL tEGAL Expression;
 
-Body: tACCO {increase_depth();} Instructions tACCF {printf("juste avant de tout enlever");print_table_sym();decrease_depth();};
+Body: tACCO {increase_depth();} Instructions tACCF {decrease_depth();};
 
 Instructions: Instruction Instructions | ;
 
@@ -60,23 +59,22 @@ Instruction: Affectation
 
 Declaration: tINT tID tPV {add_symbol($2);
 													}
-			| tINT tID {add_symbol($2);} tEGAL Expression tPV { printf("declaration\n");
+			| tINT tID {add_symbol($2);} tEGAL Expression tPV {
 																													pop_symbol_tmp();
 																													add_ins("LOAD", 0, $5, 0);
 																													add_ins("STORE", get_addr($2), 0, 0);
 																												}
 			;
 
-Affectation: tID tEGAL Expression tPV { printf("Affectation\n");
+Affectation: tID tEGAL Expression tPV {
 																				pop_symbol_tmp();
 																				add_ins("LOAD", 0, $3, 0);
-																				printf("print : %d\n",get_addr($1));
 																				add_ins("STORE", get_addr($1), 0, 0);
 																			}
 			;
 
 
-Expression: Expression tPLUS Expression { printf("%d PLUS %d\n", $1, $3);
+Expression: Expression tPLUS Expression {
 																					pop_symbol_tmp();
 																				  pop_symbol_tmp();
 																				  add_ins("LOAD", 0, $1, 0);
@@ -86,17 +84,17 @@ Expression: Expression tPLUS Expression { printf("%d PLUS %d\n", $1, $3);
 																				  add_ins("STORE", addr3, 0, 0);
 																				  $$ = addr3;
 																			  }
-	 		| Expression tMOINS Expression { printf("%d MOINS %d\n", $1, $3);
+	 		| Expression tMOINS Expression {
 																			 pop_symbol_tmp();
 																			 pop_symbol_tmp();
 																		   add_ins("LOAD", 0, $1, 0);
 																			 add_ins("LOAD", 1, $3, 0);
-												 							 add_ins("SOU", 0, 0, 1);
+												 							 add_ins("SUB", 0, 0, 1);
 																			 int addr3 = add_symbol_tmp();
 																			 add_ins("STORE", addr3, 0, 0);
 																			 $$ = addr3;
 																		 }
-	 		| Expression tMUL Expression { printf("%d FOIS %d\n", $1, $3);
+	 		| Expression tMUL Expression {
 																		 pop_symbol_tmp();
 																		 pop_symbol_tmp();
 																	   add_ins("LOAD", 0, $1, 0);
@@ -106,7 +104,7 @@ Expression: Expression tPLUS Expression { printf("%d PLUS %d\n", $1, $3);
 																		 add_ins("STORE", addr3, 0, 0);
 																		 $$ = addr3;
 																	 }
-	 		| Expression tDIV Expression { printf("%d DIVISE PAR %d\n", $1, $3);
+	 		| Expression tDIV Expression {
 																		 pop_symbol_tmp();
 																		 pop_symbol_tmp();
 																	   add_ins("LOAD", 0, $1, 0);
@@ -122,12 +120,12 @@ Expression: Expression tPLUS Expression { printf("%d PLUS %d\n", $1, $3);
 						int addr = get_addr($1);
 						$$ = addr;
 					}
-			| tVAL {printf("tVAL\n");int addr = add_symbol_tmp();
+			| tVAL {int addr = add_symbol_tmp();
 							add_ins("AFC", 0, $1, 0);
 							add_ins("STORE", addr, 0, 0);
 							$$ = addr;
 				}
-				| tMOINS tVAL {printf("tVAL\n");int addr = add_symbol_tmp();
+				| tMOINS tVAL {int addr = add_symbol_tmp();
 								add_ins("AFC", 0, -$2, 0);
 								add_ins("STORE", addr, 0, 0);
 								$$ = addr;

@@ -20,10 +20,12 @@ void add_symbol(char * name)
 {
 	if (get_addr(name) == -1)
 	{
+		printf("ADDING SYMBOL\n");
 		strncpy(tab_sym[index_symbol].name,name,SIZE_NAME);
 		tab_sym[index_symbol].addr = index_symbol;
 		tab_sym[index_symbol].depth = current_depth;
 		index_symbol++;
+		print_table_sym();
 	}
 	else
 	{
@@ -33,19 +35,24 @@ void add_symbol(char * name)
 
 int add_symbol_tmp()
 {
+		printf("ADDING SYMBOL\n");
 		int ret;
 		strncpy(tab_sym[index_symbol].name,"TMP",SIZE_NAME);
 		tab_sym[index_symbol].addr = index_symbol;
 		tab_sym[index_symbol].depth = current_depth;
 		ret = tab_sym[index_symbol].addr;
 		index_symbol++;
+		print_table_sym();
 		return ret;
 }
 
 int pop_symbol_tmp()
 {
-		int ret = tab_sym[index_symbol].addr;
+		printf("POPPING SYMBOL\n");
+		int ret = tab_sym[index_symbol-1].addr;
 		index_symbol--;
+		if (index_symbol < 0)
+			index_symbol = 0;
 		return ret;
 }
 
@@ -53,7 +60,7 @@ int get_addr(char * name)
 {
 	int addr = -1;
 	int i = 0;
-	for (i = index_symbol - 1 ; i >= 0 ; i--)
+	for (i = index_symbol - 1; i >= 0 ; i--)
 	{
 		if ((strcmp(tab_sym[i].name,name) == 0))
 		{
@@ -62,21 +69,6 @@ int get_addr(char * name)
 	}
 	return addr;
 }
-
-/*
-int get_addr(char * name)
-{
-	int i = 0;
-	for (i = 0; i<index_symbol;i++)
-	{
-		if ((strcmp(tab_sym[i].name,name) == 0))
-		{
-			return tab_sym[i].addr;
-		}
-	}
-	return -1;
-}
-*/
 
 int add_ins(char * name, int i, int j, int k){
 	strncpy(tab_ins[index_instruction].ins,name,SIZE_NAME);
@@ -88,16 +80,16 @@ int add_ins(char * name, int i, int j, int k){
 }
 
 void increase_depth(){
-	printf("INCREASE\n");
 	current_depth++;
 }
 
 void decrease_depth(){
-	printf("DECREASE\n");
-	while(tab_sym[index_symbol].depth == current_depth){
+	while(tab_sym[index_symbol-1].depth == current_depth){
 		index_symbol--;
 	}
 	current_depth--;
+	if (index_symbol < 0)
+		index_symbol = 0;
 }
 
 void update_jmp(int i)
@@ -108,7 +100,7 @@ void update_jmp(int i)
 void print_table_sym()
 {
 	int i = 0;
-	printf("\n[------------------ Symbols Table -----------------]\n");
+	printf("[------------------ Symbols Table -----------------]\n");
 	for (i = 0 ; i<index_symbol ; i++)
 	{
 		printf("index = %d, name = %s, addr = %d, depth = %d\n",i,tab_sym[i].name,tab_sym[i].addr, tab_sym[i].depth);
@@ -133,7 +125,7 @@ void print_table_ins()
 					if ((strcmp(tab_ins[i].ins,"ADD") == 0)){
 						printf("%s R%d R%d R%d,\n",tab_ins[i].ins,tab_ins[i].i, tab_ins[i].j, tab_ins[i].k);
 					} else {
-						if ((strcmp(tab_ins[i].ins,"SOU") == 0)){
+						if ((strcmp(tab_ins[i].ins,"SUB") == 0)){
 							printf("%s R%d R%d R%d,\n",tab_ins[i].ins,tab_ins[i].i, tab_ins[i].j, tab_ins[i].k);
 						} else {
 							if ((strcmp(tab_ins[i].ins,"MUL") == 0)){
@@ -182,7 +174,7 @@ void write_table_ins(){
 					if ((strcmp(tab_ins[i].ins,"ADD") == 0)){
 						fprintf(file,"%s        R%d R%d R%d\n",tab_ins[i].ins,tab_ins[i].i, tab_ins[i].j, tab_ins[i].k);
 					} else {
-						if ((strcmp(tab_ins[i].ins,"SOU") == 0)){
+						if ((strcmp(tab_ins[i].ins,"SUB") == 0)){
 							fprintf(file,"%s        R%d R%d R%d\n",tab_ins[i].ins,tab_ins[i].i, tab_ins[i].j, tab_ins[i].k);
 						} else {
 							if ((strcmp(tab_ins[i].ins,"MUL") == 0)){
@@ -192,13 +184,13 @@ void write_table_ins(){
 									fprintf(file,"%s        R%d R%d R%d\n",tab_ins[i].ins,tab_ins[i].i, tab_ins[i].j, tab_ins[i].k);
 								} else {
 									if ((strcmp(tab_ins[i].ins,"JMPC") == 0)){
-										fprintf(file,"%s       @%d R%d,\n",tab_ins[i].ins,tab_ins[i].i, tab_ins[i].j);
+										fprintf(file,"%s       @%d R%d\n",tab_ins[i].ins,tab_ins[i].i, tab_ins[i].j);
 									} else {
 										if ((strcmp(tab_ins[i].ins,"EQU") == 0)){
-												fprintf(file,"%s        R%d R%d R%d,\n",tab_ins[i].ins,tab_ins[i].i, tab_ins[i].j, tab_ins[i].k);
+												fprintf(file,"%s        R%d R%d R%d\n",tab_ins[i].ins,tab_ins[i].i, tab_ins[i].j, tab_ins[i].k);
 										} else {
 											if ((strcmp(tab_ins[i].ins,"JMP") == 0)){
-													fprintf(file,"%s        @%d R%d,\n",tab_ins[i].ins,tab_ins[i].i, tab_ins[i].j);
+													fprintf(file,"%s        @%d R%d\n",tab_ins[i].ins,tab_ins[i].i, tab_ins[i].j);
 											}else {
 												printf("ERROR print_table_ins");
 											}
