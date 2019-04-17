@@ -27,6 +27,7 @@ void write_table_ins();
 void add_symbol(char * name);
 int add_symbol_tmp();
 int add_ins(char * name, int i, int j, int k);
+int get_curr_instr();
 int get_addr(char * name);
 int pop_symbol_tmp();
 void print_table_sym();

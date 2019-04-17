@@ -9,10 +9,10 @@ def interpreteur(nom_file):
     index = 0
     i = 0
     while index < len(lignes):
-        print(i+1)
+        #print(i+1)
         i = execLine(lignes[index].split(),i)
         if i != index+1:
-            print("JUMP")
+            #print("JUMP")
             index = i
         else:
             index+=1
@@ -26,56 +26,56 @@ def interpreteur(nom_file):
 
 def execLine(instr,i):
     if (instr[0] == "AFC"):
-        print(instr)
+        #print(instr)
         registres[int(instr[1])] = int(instr[2])
     elif (instr[0] == "STORE"):
-        print(instr)
+        #print(instr)
         mem[int(instr[1])] = registres[int(instr[2])]
     elif (instr[0] == "LOAD"):
-        print(instr)
+        ##print(instr)
         registres[int(instr[1])] = mem[int(instr[2])]
     elif (instr[0] == "EQU"):
-        print(instr)
-        print(registres[int(instr[2])])
-        print(registres[int(instr[3])])
+        #print(instr)
+        #print(registres[int(instr[2])])
+        #print(registres[int(instr[3])])
         if (registres[int(instr[2])] == registres[int(instr[3])]):
             registres[int(instr[1])] = 1
         else:
             registres[int(instr[1])] = 0
     elif (instr[0] == "INF"):
-        print(instr)
-        print(registres[int(instr[2])])
-        print(registres[int(instr[3])])
+        #print(instr)
+        #print(registres[int(instr[2])])
+        #print(registres[int(instr[3])])
         if (registres[int(instr[2])] < registres[int(instr[3])]):
             registres[int(instr[1])] = 1
         else:
             registres[int(instr[1])] = 0
     elif (instr[0] == "SUP"):
-        print(instr)
-        print(registres[int(instr[2])])
-        print(registres[int(instr[3])])
+        #print(instr)
+        #print(registres[int(instr[2])])
+        #print(registres[int(instr[3])])
         if (registres[int(instr[2])] > registres[int(instr[3])]):
             registres[int(instr[1])] = 1
         else:
             registres[int(instr[1])] = 0
     elif (instr[0] == "JMPC"):
-        print(instr)
+        #print(instr)
         if registres[int(instr[2])] == 0:
             return int(instr[1])-1
     elif (instr[0] == "JMP"):
-        print(instr)
+        #print(instr)
         return int(instr[1])-1
     elif (instr[0] == "MUL"):
-        print(instr)
+        #print(instr)
         registres[int(instr[1])] = registres[int(instr[2])] * registres[int(instr[3])]
     elif (instr[0] == "ADD"):
-        print(instr)
+        #print(instr)
         registres[int(instr[1])] = registres[int(instr[2])] + registres[int(instr[3])]
     elif (instr[0] == "DIV"):
-        print(instr)
+        #print(instr)
         registres[int(instr[1])] = registres[int(instr[2])] / registres[int(instr[3])]
     elif (instr[0] == "SUB"):
-        print(instr)
+        #print(instr)
         registres[int(instr[1])] = registres[int(instr[2])] - registres[int(instr[3])]
     else:
         print("ERROR !")

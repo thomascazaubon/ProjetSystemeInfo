@@ -11,13 +11,13 @@
 	char* variable;
 }
 
-%token tMAIN tACCO tACCF tCONST tSUP tINF tINT tPTF tID tIF tELSE tVAL tPLUS tMOINS tMUL tDIV tEGAL tPARO tPARF tVIRG tPV tERR
+%token tMAIN tACCO tACCF tCONST tWHILE tSUP tINF tINT tID tIF tELSE tVAL tPLUS tMOINS tMUL tDIV tEGAL tPARO tPARF tVIRG tPV tERR
 
 %type <entier> tVAL
 %type <variable> tID
 %type <entier> tINT
 %type <entier> Expression
-%type <entier> Egalite
+%type <entier> Verite
 
 %left tPLUS tMOINS
 %left tMUL tDIV
@@ -29,10 +29,10 @@ Start: tMAIN tPARO tPARF Body {
 															 write_table_ins();
 															};
 
-IfSansElse: tIF tPARO Egalite tPARF Body {update_jmp($3);};
+IfSansElse: tIF tPARO Verite tPARF Body {update_jmp($3);};
 
 IfAvecElse:
-		tIF tPARO Egalite tPARF Body tELSE
+		tIF tPARO Verite tPARF Body tELSE
 					{
 						$<entier>$ = add_ins("JMP",-1,0,0);
 						update_jmp($3);
@@ -44,7 +44,9 @@ IfAvecElse:
 
 If : IfSansElse | IfAvecElse;
 
-Egalite: Expression tEGAL tEGAL Expression {
+While : tWHILE {$<entier>$ = get_curr_instr()+1;} tPARO Verite tPARF Body {add_ins("JMP",$<entier>2,0,0); update_jmp($4);};
+
+Verite: Expression tEGAL tEGAL Expression {
 		int addr2 = pop_symbol_tmp();
 		int addr1 = pop_symbol_tmp();
 		add_ins("LOAD",0,addr1,0);
@@ -52,7 +54,7 @@ Egalite: Expression tEGAL tEGAL Expression {
 		add_ins("EQU",0,0,1);
 		$$ = add_ins("JMPC",-1,0,0);
 	}
-	
+
 	| Expression {
 	int addr = pop_symbol_tmp();
 	add_ins("LOAD",0,addr,0);
@@ -85,7 +87,8 @@ Instructions: Instruction Instructions | ;
 
 Instruction: Affectation
 		| Declaration
-		| If;
+		| If
+		| While;
 
 Declaration: tINT tID tPV {add_symbol($2);
 													}

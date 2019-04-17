@@ -1,12 +1,7 @@
 main () {
-	int a = 1;
-	if (a<1){
-		a = 1;
-	}else{
-		if (a == 12){
-			a = 2;
-		}else{
-			a = 3;
-		}
+	int a = 2;
+	while (a>0)
+	{
+		a = a * a * a;
 	}
 }

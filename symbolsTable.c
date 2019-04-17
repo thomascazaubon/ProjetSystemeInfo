@@ -99,6 +99,11 @@ void update_jmp(int i)
 	tab_ins[i].i = index_instruction+1;
 }
 
+int get_curr_instr()
+{
+	return index_instruction;
+}
+
 void print_table_sym()
 {
 	int i = 0;

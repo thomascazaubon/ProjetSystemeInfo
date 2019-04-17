@@ -8,9 +8,9 @@
 "}" {return tACCF;}
 "const" {return tCONST;}
 "int" {return tINT;}
-"printf" {return tPTF;}
 "if" {return tIF;}
 "else" {return tELSE;}
+"while" {return tWHILE;}
 
 [a-zA-Z][a-zA-Z0-9_]* {yylval.variable = strdup(yytext);
 					   					 return tID;}
