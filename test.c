@@ -1,6 +1,6 @@
 main () {
-	int a = 12;
-	if (a == 13){
+	int a = 1;
+	if (a<1){
 		a = 1;
 	}else{
 		if (a == 12){

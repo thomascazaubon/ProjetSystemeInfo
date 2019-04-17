@@ -53,6 +53,7 @@ int pop_symbol_tmp()
 		index_symbol--;
 		if (index_symbol < 0)
 			index_symbol = 0;
+		print_table_sym();
 		return ret;
 }
 
@@ -71,6 +72,7 @@ int get_addr(char * name)
 }
 
 int add_ins(char * name, int i, int j, int k){
+	printf("[%s %d %d %d]\n", name, i, j, k);
 	strncpy(tab_ins[index_instruction].ins,name,SIZE_NAME);
 	tab_ins[index_instruction].i = i;
 	tab_ins[index_instruction].j = j;
@@ -189,10 +191,20 @@ void write_table_ins(){
 										if ((strcmp(tab_ins[i].ins,"EQU") == 0)){
 												fprintf(file,"%s        R%d R%d R%d\n",tab_ins[i].ins,tab_ins[i].i, tab_ins[i].j, tab_ins[i].k);
 										} else {
-											if ((strcmp(tab_ins[i].ins,"JMP") == 0)){
-													fprintf(file,"%s        @%d R%d\n",tab_ins[i].ins,tab_ins[i].i, tab_ins[i].j);
-											}else {
-												printf("ERROR print_table_ins");
+											if ((strcmp(tab_ins[i].ins,"SUP") == 0)){
+													fprintf(file,"%s        R%d R%d R%d\n",tab_ins[i].ins,tab_ins[i].i, tab_ins[i].j, tab_ins[i].k);
+											}
+											else {
+												if ((strcmp(tab_ins[i].ins,"INF") == 0)){
+														fprintf(file,"%s        R%d R%d R%d\n",tab_ins[i].ins,tab_ins[i].i, tab_ins[i].j, tab_ins[i].k);
+												}
+												else {
+													if ((strcmp(tab_ins[i].ins,"JMP") == 0)){
+															fprintf(file,"%s        @%d R%d\n",tab_ins[i].ins,tab_ins[i].i, tab_ins[i].j);
+													}else {
+														printf("ERROR print_table_ins");
+													}
+												}
 											}
 										}
 									}

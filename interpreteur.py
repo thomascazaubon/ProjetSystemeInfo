@@ -1,10 +1,15 @@
+def format(line):
+    return line.replace(" R", " ").replace(" @", " ")
+
 def interpreteur(nom_file):
     fichier = open(nom_file,"r")
     lignes = fichier.readlines()
+    lignes = [format(line) for line in lignes]
+
     index = 0
     i = 0
     while index < len(lignes):
-        print(i)
+        print(i+1)
         i = execLine(lignes[index].split(),i)
         if i != index+1:
             print("JUMP")
@@ -37,9 +42,25 @@ def execLine(instr,i):
             registres[int(instr[1])] = 1
         else:
             registres[int(instr[1])] = 0
+    elif (instr[0] == "INF"):
+        print(instr)
+        print(registres[int(instr[2])])
+        print(registres[int(instr[3])])
+        if (registres[int(instr[2])] < registres[int(instr[3])]):
+            registres[int(instr[1])] = 1
+        else:
+            registres[int(instr[1])] = 0
+    elif (instr[0] == "SUP"):
+        print(instr)
+        print(registres[int(instr[2])])
+        print(registres[int(instr[3])])
+        if (registres[int(instr[2])] > registres[int(instr[3])]):
+            registres[int(instr[1])] = 1
+        else:
+            registres[int(instr[1])] = 0
     elif (instr[0] == "JMPC"):
         print(instr)
-        if registres[int(instr[2])] == 1:
+        if registres[int(instr[2])] == 0:
             return int(instr[1])-1
     elif (instr[0] == "JMP"):
         print(instr)

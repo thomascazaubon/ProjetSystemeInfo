@@ -22,6 +22,8 @@
 "*" {return tMUL;}
 "/" {return tDIV;}
 "=" {return tEGAL;}
+">" {return tSUP;}
+"<" {return tINF;}
 "(" {return tPARO;}
 ")" {return tPARF;}
 

@@ -11,14 +11,13 @@
 	char* variable;
 }
 
-%token tMAIN tACCO tACCF tCONST tINT tPTF tID tIF tELSE tVAL tPLUS tMOINS tMUL tDIV tEGAL tPARO tPARF tVIRG tPV tERR
+%token tMAIN tACCO tACCF tCONST tSUP tINF tINT tPTF tID tIF tELSE tVAL tPLUS tMOINS tMUL tDIV tEGAL tPARO tPARF tVIRG tPV tERR
 
 %type <entier> tVAL
 %type <variable> tID
 %type <entier> tINT
 %type <entier> Expression
-%type <entier> JMPC
-%type <entier> JMP
+%type <entier> Egalite
 
 %left tPLUS tMOINS
 %left tMUL tDIV
@@ -30,24 +29,55 @@ Start: tMAIN tPARO tPARF Body {
 															 write_table_ins();
 															};
 
-JMPC: {
+IfSansElse: tIF tPARO Egalite tPARF Body {update_jmp($3);};
+
+IfAvecElse:
+		tIF tPARO Egalite tPARF Body tELSE
+					{
+						$<entier>$ = add_ins("JMP",-1,0,0);
+						update_jmp($3);
+					}
+		Body
+					{
+						update_jmp($<entier>7);
+					};
+
+If : IfSansElse | IfAvecElse;
+
+Egalite: Expression tEGAL tEGAL Expression {
 		int addr2 = pop_symbol_tmp();
 		int addr1 = pop_symbol_tmp();
 		add_ins("LOAD",0,addr1,0);
 		add_ins("LOAD",1,addr2,0);
 		add_ins("EQU",0,0,1);
 		$$ = add_ins("JMPC",-1,0,0);
-	};
-
-JMP: {$$ = add_ins("JMP",-1,0,0);};
-
-IfSansElse: tIF tPARO Egalite tPARF JMPC Body {update_jmp($5);};
-
-IfAvecElse: tIF tPARO Egalite tPARF JMPC Body JMP tELSE {update_jmp($5);}Body {update_jmp($7);};
-
-If : IfSansElse | IfAvecElse;
-
-Egalite: Expression tEGAL tEGAL Expression;
+	}
+	
+	| Expression {
+	int addr = pop_symbol_tmp();
+	add_ins("LOAD",0,addr,0);
+	add_ins("AFC",1,0,0);
+	add_ins("EQU",0,0,1);
+	add_ins("AFC",1,0,0);
+	add_ins("EQU",0,0,1);
+	$$ = add_ins("JMPC",-1,0,0);}
+	| Expression tSUP Expression {
+		int addr2 = pop_symbol_tmp();
+		int addr1 = pop_symbol_tmp();
+		add_ins("LOAD",0,addr1,0);
+		add_ins("LOAD",1,addr2,0);
+		add_ins("SUP",0,0,1);
+		$$ = add_ins("JMPC",-1,0,0);
+	}
+	| Expression tINF Expression {
+		int addr2 = pop_symbol_tmp();
+		int addr1 = pop_symbol_tmp();
+		add_ins("LOAD",0,addr1,0);
+		add_ins("LOAD",1,addr2,0);
+		add_ins("INF",0,0,1);
+		$$ = add_ins("JMPC",-1,0,0);
+	}
+	;
 
 Body: tACCO {increase_depth();} Instructions tACCF {decrease_depth();};
 
@@ -116,11 +146,14 @@ Expression: Expression tPLUS Expression {
 																	 }
 			| tID
 					{
-						add_symbol_tmp();
+						int tmp = add_symbol_tmp();
 						int addr = get_addr($1);
-						$$ = addr;
+						add_ins("LOAD", 0, addr, 0);
+						add_ins("STORE", tmp, 0, 0);
+						$$ = tmp;
 					}
-			| tVAL {int addr = add_symbol_tmp();
+			| tVAL {
+							int addr = add_symbol_tmp();
 							add_ins("AFC", 0, $1, 0);
 							add_ins("STORE", addr, 0, 0);
 							$$ = addr;
