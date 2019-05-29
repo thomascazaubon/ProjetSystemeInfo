@@ -3,3 +3,6 @@ y.tab.*
 y.output
 compiler
 instructions.asm
+processeur/*
+!processeur/*.vhd
+
