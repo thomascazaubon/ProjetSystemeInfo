@@ -11,18 +11,17 @@ def interpreteur(nom_file):
     while index < len(lignes):
         #print(i+1)
         i = execLine(lignes[index].split(),i)
+        print(lignes[index])
         if i != index+1:
             #print("JUMP")
             index = i
         else:
             index+=1
+        print("Registres : ")
         print(registres)
+        print("Memoire : ")
         print(mem)
     fichier.close()
-    print("Registres : ")
-    print(registres)
-    print("Memoire : ")
-    print(mem)
 
 def execLine(instr,i):
     if (instr[0] == "AFC"):
